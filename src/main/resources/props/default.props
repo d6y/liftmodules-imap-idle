@@ -1,0 +1,5 @@
+# This mail account must have IMAP enable in your Google apps settings 
+imap.idle.mail.user=you@yourdomain.com
+imap.idle.mail.password=trustno1
+imap.idle.mail.host=imap.gmail.com
+mail.session.debug=true
