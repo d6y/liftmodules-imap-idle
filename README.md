@@ -6,8 +6,8 @@ Provides push-like email to be received by Lift web applications, via the [IMAP 
 
 There is currently no public repository containing this module:
 
-    $ git clone git://github.com/d6y/liftmodules-imapidle.git
-    $ cd liftmodules-imapidle
+    $ git clone git://github.com/d6y/liftmodules-imap-idle.git
+    $ cd liftmodules-imap-idle
     $ sbt
     > update
     > publish-local
@@ -31,6 +31,8 @@ In your application's Boot.boot code:
 	}
 
 ...which will dump the contents of the email to your console and delete it.
+
+If you're doing persistence in the Message => Boolean handler, ensure you initialize Record/Mapper before you ImapIdle.init because init will try to connect and start processing any emails that may be waiting. 
 
 ## Gotchas
 
