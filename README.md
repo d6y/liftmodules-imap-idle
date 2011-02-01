@@ -1,6 +1,6 @@
 # IMAP IDLE Lift Module
 
-Provides push-like email to be received by Lift web applications, via the [IMAP IDLE](http://en.wikipedia.org/wiki/IMAP_IDLE) feature.
+Provides push-like email: your Lift web application can be notified when email arrives, via the [IMAP IDLE](http://en.wikipedia.org/wiki/IMAP_IDLE) feature.
 
 ## Using this module
 
@@ -26,11 +26,11 @@ Set your IMAP login credentials in your props file.  For example, add the follow
 In your application's Boot.boot code:
 
 	bootstrap.liftmodules.ImapIdle.init { m : javax.mail.Message => 
-			println("You've got mail: "+net.liftweb.modules.imapidle.EmailUtil.dump(m))
-			true // delete the email on the server
-	}
+		println("You've got mail: "+net.liftweb.modules.imapidle.EmailUtils.dump(m))
+		true // delete the email on the server
+}
 
-...which will dump the contents of the email to your console and delete it.
+...which will dump the contents of the email to your console and then delete the mail.
 
 If you're doing persistence in the Message => Boolean handler, ensure you initialize Record/Mapper before you ImapIdle.init because init will try to connect and start processing any emails that may be waiting. 
 
@@ -41,7 +41,7 @@ If you're doing persistence in the Message => Boolean handler, ensure you initia
  * Your email account must be set to enable IMAP access.  In Gmail this is Settings > Forwarding and POP/IMAP.
 
  * If you're deploying under Jetty 6.1.26 or earlier, you will need to replace $JETTY_HOME/lib/naming/mail-1.4.jar with mail-1.4.1.jar which
-is the version that ships with Lift. Or... in some way resolve this w.r.t to http://docs.codehaus.org/display/JETTY/Classloading
+is the version that ships with Lift. Or... in some way resolve this w.r.t to [Jetty classloader](http://docs.codehaus.org/display/JETTY/Classloading.
 
 
 ## How this works
@@ -70,5 +70,5 @@ If you want to interact with EmailReceiver from the SBT console, here's how:
 
 	// E.g., perform a manual collection of mail, which is what you'll almost certainly
 	// want to do at start up to catch up any mails you have missed:
-	EmailReceiver ! 'collection
+	EmailReceiver ! 'collect
 
