@@ -40,8 +40,7 @@ If you're doing persistence in the Message => Boolean handler, ensure you initia
 
  * Your email account must be set to enable IMAP access.  In Gmail this is Settings > Forwarding and POP/IMAP.
 
- * If you're deploying under Jetty 6.1.26 or earlier, you will need to replace $JETTY_HOME/lib/naming/mail-1.4.jar with mail-1.4.1.jar which
-is the version that ships with Lift. Or... in some way resolve this w.r.t to [Jetty classloader](http://docs.codehaus.org/display/JETTY/Classloading).
+ * If you're deploying under Jetty 6.1.26 or earlier, you will need to replace $JETTY_HOME/lib/naming/mail-1.4.jar with mail-1.4.1.jar which is the version that ships with Lift. Or... in some way resolve this w.r.t to [Jetty classloader](http://docs.codehaus.org/display/JETTY/Classloading).
 
 
 ## How this works
