@@ -14,7 +14,7 @@
    limitations under the License.package bootstrap.liftmodules
 */
 
-package net.liftweb.modules
+package net.liftmodules
 
 package object imapidle {
 	

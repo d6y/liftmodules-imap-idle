@@ -13,27 +13,24 @@
    See the License for the specific language governing permissions and
    limitations under the License.package bootstrap.liftmodules
 */
-package bootstrap.liftmodules
+
+package net.liftmodules.imapidle
 
 import javax.mail._
 import net.liftweb.util._
 import net.liftweb.common._
-
-import net.liftweb.modules.imapidle.{MessageHandler,EmailReceiver,Credentials,Callback}
 
 object ImapIdle extends Loggable {
 		
 	def init : Unit = { }	
 		
 	def init(handler: MessageHandler) : Unit =  List("user", "password", "host") map { k => Props.get("imap.idle.mail."+k) } match {
-      case Full(u) :: Full(p) :: Full(h) :: Nil =>
-        EmailReceiver ! Credentials(u, p, h)
-        EmailReceiver ! Callback(handler)
-		EmailReceiver ! 'startup
-        EmailReceiver ! 'collect
+		case Full(u) :: Full(p) :: Full(h) :: Nil =>
+        	EmailReceiver ! Credentials(u, p, h)
+        	EmailReceiver ! Callback(handler)
+			EmailReceiver ! 'startup
+        	EmailReceiver ! 'collect
 
-      case _ => logger.warn("IMAP - feature not starting")
+      	case _ => logger.warn("IMAP - feature not starting")
     }
-	
-	
 }

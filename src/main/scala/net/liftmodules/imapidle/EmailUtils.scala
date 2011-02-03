@@ -13,7 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.package bootstrap.liftmodules
 */
-package net.liftweb.modules.imapidle
+package net.liftmodules.imapidle
 
 import net.liftweb.actor._
 import net.liftweb.common._

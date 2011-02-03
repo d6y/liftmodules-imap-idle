@@ -14,7 +14,7 @@ There is currently no public repository containing this module:
 
 Once published, add the following dependency to your SBT project file:
 
-	"net.liftweb.modules" %% "imap-idle" % "0.8"
+	"net.liftmodules" %% "imap-idle" % "0.9"
 
 Set your IMAP login credentials in your props file.  For example, add the following to src/main/resources/production.default.props
 
@@ -24,9 +24,11 @@ Set your IMAP login credentials in your props file.  For example, add the follow
 	imap.idle.mail.host=imap.gmail.com
 
 In your application's Boot.boot code:
+    
+	import net.liftmodules.imapidle._
 
-	bootstrap.liftmodules.ImapIdle.init { m : javax.mail.Message => 
-		println("You've got mail: "+net.liftweb.modules.imapidle.EmailUtils.dump(m))
+	ImapIdle.init { m : javax.mail.Message => 
+		println("You've got mail: "+EmailUtils.dump(m))
 		true // delete the email on the server
 }
 
@@ -57,7 +59,7 @@ If you want to interact with EmailReceiver from the SBT console, here's how:
 
 	import net.liftweb.common._
 	import net.liftweb.util._
-	import net.liftweb.modules.imapidle._
+	import net.liftmodules.imapidle._
 
 	net.liftweb.util.LoggingAutoConfigurer()()
 
