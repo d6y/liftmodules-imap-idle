@@ -30,7 +30,7 @@ In your application's Boot.boot code:
 	ImapIdle.init { m : javax.mail.Message => 
 		println("You've got mail: "+EmailUtils.dump(m))
 		true // delete the email on the server
-}
+	}
 
 ...which will dump the contents of the email to your console and then delete the mail.
 
