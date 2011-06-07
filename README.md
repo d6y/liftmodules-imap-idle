@@ -36,13 +36,19 @@ In your application's Boot.boot code:
 
 If you're doing persistence in the Message => Boolean handler, ensure you initialize Record/Mapper before you ImapIdle.init because init will try to connect and start processing any emails that may be waiting. 
 
+## Example Scenario
+
+Using this module you can provide a way for users to email in content via an [address tag](http://en.wikipedia.org/wiki/Email_address#Address_tags).  Here's how... listen for messages at a single email address, such as account@example.com. Users email content into account+UNIQUE_ID@example.com.  In your handler, extract the recipient from the message, parse out the UNIQUE_UD. Finally, do whatever you need to do with the content based on the UNIQUE_ID.  
+
 ## Gotchas
 
- * For this code to work, the IMAP server must support the IDLE command.  Tested servers: Google mail.
+ * For this module to work, the IMAP server must support the IDLE command.  Tested servers: Google mail (imap.google.com).
 
  * Your email account must be set to enable IMAP access.  In Gmail this is Settings > Forwarding and POP/IMAP.
 
  * If you're deploying under Jetty 6.1.26 or earlier, you will need to replace $JETTY_HOME/lib/naming/mail-1.4.jar with mail-1.4.1.jar which is the version that ships with Lift. Or... in some way resolve this w.r.t to [Jetty classloader](http://docs.codehaus.org/display/JETTY/Classloading).
+
+ * This code depends on a com.sun class, meaning it may not work under non-Sun derived JDKs.
 
 
 ## How this works
