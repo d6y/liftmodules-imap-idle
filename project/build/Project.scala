@@ -3,7 +3,7 @@ import de.element34.sbteclipsify._
 
 class Project(info: ProjectInfo) extends DefaultProject(info) with Eclipsify {
   
-  val liftVersion = "2.3"
+  val liftVersion = "2.4-M1"
 
   override def compileOptions = super.compileOptions ++ Seq(Unchecked)
 

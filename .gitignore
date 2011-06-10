@@ -9,3 +9,4 @@ ensime_port
 .project
 .settings
 .scala_dependencies
+project/plugins/project/build.properties
