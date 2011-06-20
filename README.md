@@ -4,17 +4,13 @@ Provides push-like email: your Lift web application can be notified when email a
 
 ## Using this module
 
-There is currently no public repository containing this module:
+Add the following repository to your SBT project file:
 
-    $ git clone git://github.com/d6y/liftmodules-imap-idle.git
-    $ cd liftmodules-imap-idle
-    $ sbt
-    > update
-    > publish-local
+  lazy val liftModulesRelease = "liftmodules repository" at "http://repository-liftmodules.forge.cloudbees.com/release/"
 
-Once published, add the following dependency to your SBT project file:
+Add the following dependency to your SBT project file:
 
-	"net.liftmodules" %% "imap-idle" % "0.9"
+	"net.liftmodules" %% "imap-idle" % (liftVersion+"-0.9")
 
 Set your IMAP login credentials in your props file.  For example, add the following to src/main/resources/production.default.props
 
@@ -78,4 +74,13 @@ If you want to interact with EmailReceiver from the SBT console, here's how:
 	// E.g., perform a manual collection of mail, which is what you'll almost certainly
 	// want to do at start up to catch up any mails you have missed:
 	EmailReceiver ! 'collect
+
+
+## To build from source:
+
+    $ git clone git://github.com/d6y/liftmodules-imap-idle.git
+    $ cd liftmodules-imap-idle
+    $ sbt
+    > update
+    > publish-local
 
