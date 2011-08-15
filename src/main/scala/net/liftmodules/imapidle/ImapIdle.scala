@@ -20,10 +20,18 @@ import javax.mail._
 import net.liftweb.util._
 import net.liftweb.common._
 
+/**
+ * Module configuration, used during Boot.boot.
+ */
 object ImapIdle extends Loggable {
 		
 	def init : Unit = { }	
 		
+  /**
+  * Initialise IMAP IDLE module if imap.idle.mail.user, imap.idle.mail.password and imap.idle.mail.host values are 
+  found in Props.
+  * @param handle the function to execute for each email recevied. 
+  */  
 	def init(handler: MessageHandler) : Unit =  List("user", "password", "host") map { k => Props.get("imap.idle.mail."+k) } match {
 		case Full(u) :: Full(p) :: Full(h) :: Nil =>
         	EmailReceiver ! Credentials(u, p, h)

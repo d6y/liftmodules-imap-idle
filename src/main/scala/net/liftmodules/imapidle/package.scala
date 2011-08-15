@@ -18,6 +18,10 @@ package net.liftmodules
 
 package object imapidle {
 	
+   /** Signature for a function that is given an email and 
+   signals the email should be deleted (true) or not (false).
+   Warning: this is likely to change from returning a boolean to
+   an enumeration for clarity. */
 	type MessageHandler = (javax.mail.Message) => Boolean
 
 }

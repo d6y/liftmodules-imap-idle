@@ -26,10 +26,19 @@ import net.liftweb.actor._
 import net.liftweb.common._
 import net.liftweb.util._
 
+/**
+ * Container for the IMAP authentication credentials.
+ */
 case class Credentials(username: String, password: String, host: String = "imap.gmail.com")
 case class Callback(h: MessageHandler)
 
 
+/**
+ * Actor which manages the connection to the IMAP server
+ * and dispatches javax.mail.Messages to the user function
+ * given during ImapIdle.init
+ * This actor is started automatically during init.
+ */
 object EmailReceiver extends LiftActor with Loggable {
 
   private var inbox: Box[Folder] = Empty
@@ -174,7 +183,7 @@ object EmailReceiver extends LiftActor with Loggable {
   
   // Useful for debugging from the console:
   //def getInbox = inbox
-
+  
   def messageHandler = {
 
     case c: Credentials => credentials = Full(c)
