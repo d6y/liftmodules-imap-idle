@@ -10,3 +10,5 @@ ensime_port
 .settings
 .scala_dependencies
 project/plugins/project/build.properties
+
+/cloudbees.credentials

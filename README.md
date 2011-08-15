@@ -4,33 +4,40 @@ Provides push-like email: your Lift web application can be notified when email a
 
 ## Using this module
 
-Add the following repository to your SBT project file:
+1. Add the following repository to your SBT project file:
 
-  lazy val liftModulesRelease = "liftmodules repository" at "http://repository-liftmodules.forge.cloudbees.com/release/"
+  For SBT 0.10:
 
-Add the following dependency to your SBT project file:
+        resolvers += "liftmodules repository" at "http://repository-liftmodules.forge.cloudbees.com/release/"
 
-	"net.liftmodules" %% "imap-idle" % (liftVersion+"-0.9")
+  For SBT 0.7:
 
-Set your IMAP login credentials in your props file.  For example, add the following to src/main/resources/production.default.props
+        lazy val liftModulesRelease = "liftmodules repository" at "http://repository-liftmodules.forge.cloudbees.com/release/"
 
-	# This mail account must have IMAP enable in your Google apps settings 
-	imap.idle.mail.user=you@yourdomain.com
-	imap.idle.mail.password=trustno1
-	imap.idle.mail.host=imap.gmail.com
+2. Add the following dependency to your SBT project file:
 
-In your application's Boot.boot code:
+        "net.liftmodules" %% "imap-idle" % (liftVersion+"-0.9.1")
+
+3. Set your IMAP login credentials in your props file, e.g.:
+
+        $ cat src/main/resources/production.default.props
+        # Check in the Google settings for this account
+        # so be sure IMAP is enabled 
+        imap.idle.mail.user=you@yourdomain.com
+        imap.idle.mail.password=trustno1
+        imap.idle.mail.host=imap.gmail.com
+
+4. In your application's Boot.boot code:
     
-	import net.liftmodules.imapidle._
-
-	ImapIdle.init { m : javax.mail.Message => 
-		println("You've got mail: "+EmailUtils.dump(m))
-		true // delete the email on the server
-	}
+        import net.liftmodules.imapidle._
+        ImapIdle.init { m : javax.mail.Message => 
+           println("You've got mail: "+EmailUtils.dump(m))
+           true // delete the email on the server
+        }
 
 ...which will dump the contents of the email to your console and then delete the mail.
 
-If you're doing persistence in the Message => Boolean handler, ensure you initialize Record/Mapper before you ImapIdle.init because init will try to connect and start processing any emails that may be waiting. 
+If you're doing persistence in the `Message => Boolean` handler, ensure you initialize Record/Mapper before you `ImapIdle.init` because init will try to connect and start processing any emails that may be waiting. 
 
 ## Example Scenario
 
@@ -49,11 +56,11 @@ Using this module you can provide a way for users to email in content via an [ad
 
 ## How this works
 
-The module creates a Lift actor called EmailReceiver.  Set the actor up by sending Credentials, the Callback to execute of type Message => Boolean, and finally the 'startup message.   When email arrives, the callback is executed and if it returns true, the email is considered handled and deleted. 
+The module creates a Lift actor called `EmailReceiver`.  Set the actor up by sending `Credentials`, the `Callback` to execute of type `Message => Boolean`, and finally the `'startup` message.   When email arrives, the callback is executed and if it returns true, the email is considered handled and deleted. 
 
 ## Debugging
 
-If you want to see what javax.mail is doing, set mail.session.debug=true in your Lift Props file.
+If you want to see what javax.mail is doing, set `mail.session.debug=true` in your Lift Props file.
 
 If you want to interact with EmailReceiver from the SBT console, here's how:
 
@@ -69,10 +76,7 @@ If you want to interact with EmailReceiver from the SBT console, here's how:
 	EmailReceiver ! Callback(EmailUtils.noopHandler)
 	EmailReceiver ! 'startup    
 	                                 
-	// Interact with EmailReceiver as you like.
-
-	// E.g., perform a manual collection of mail, which is what you'll almost certainly
-	// want to do at start up to catch up any mails you have missed:
+	// Interact with EmailReceiver as you like. E.g., perform a manual collection of mail:
 	EmailReceiver ! 'collect
 
 
@@ -80,7 +84,15 @@ If you want to interact with EmailReceiver from the SBT console, here's how:
 
     $ git clone git://github.com/d6y/liftmodules-imap-idle.git
     $ cd liftmodules-imap-idle
-    $ sbt
+    $ ./sbt
     > update
     > publish-local
+
+## To publish to Build@CloudBees:
+
+1. Copy `cloudbees.credentials.template` to create `cloudbees.credentials` and modify the file to include your CloudBees username and password.
+
+2. Manually create the directory structure in the CloudBees repo.  E.g., mount https://repository-liftmodules.forge.cloudbees.com/release/ and `mkdir /Volumes/release/net/liftmodules/imap-idle_2.8.1/2.4-M3-0.91` (if you publishing the 2.3-M3-0.91 version)
+
+3. Run `./sbt` and `+publish`
 
