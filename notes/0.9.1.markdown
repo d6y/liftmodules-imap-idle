@@ -1,0 +1,9 @@
+Update:
+
+* If the module is disconnected from the IMAP server, it will now explicitly request all waiting messages on a reconnect.  This is to avoid potentially missed messages if notifications are sent during reconnect.
+
+This version is available for Lift 2.4-M3 for Scala 2.8.1 and 2.9.0-1.
+
+
+
+
