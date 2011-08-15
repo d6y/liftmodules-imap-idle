@@ -70,7 +70,7 @@ object EmailReceiver extends LiftActor with Loggable {
 
     logger.debug("IMAP Connecting")
     require(credentials.isEmpty == false)
-	require(callback.isEmpty == false)
+    require(callback.isEmpty == false)
 
     val props = new Properties
     props.put("mail.store.protocol", "imaps")
@@ -97,7 +97,7 @@ object EmailReceiver extends LiftActor with Loggable {
     listeners = storeListener :: listeners
     store.addStoreListener(storeListener)
 
-	credentials foreach { c => 
+    credentials foreach { c => 
     	store.connect(c.host, c.username, c.password)
 
     	val inbox = store.getFolder("INBOX")
@@ -115,7 +115,7 @@ object EmailReceiver extends LiftActor with Loggable {
     	this.store = Full(store)
 
     	idle
-	}
+    }
   }
 
   private def disconnect {
@@ -148,19 +148,15 @@ object EmailReceiver extends LiftActor with Loggable {
 
   }
 
-  private def retry(attempts_left: Int)(block: => Unit): Unit = attempts_left match {
-    case 0 => logger.error("IMAP Ran out of retry attempts - check log for root cause")
-    case n =>
-      try {
-        block
-      } catch {
-        case e =>
-          logger.warn("IMAP Retry failed - will retry", e)
-          Thread.sleep(1000L * 60)
-          retry(n - 1)(block)
-      }
+  private def retry(block: => Unit): Unit = try {
+    block
+  } catch {
+    case e =>
+      logger.warn("IMAP Retry failed - will retry", e)
+      Thread.sleep(1000L * 60)
+      retry(block)
   }
-
+  
   private def reconnect {
     disconnect
     Thread.sleep(1000L * 5)
@@ -169,11 +165,11 @@ object EmailReceiver extends LiftActor with Loggable {
 
   private def processEmail(messages: Array[Message]) {
 
-	for (m <- messages; c <- callback; if c(m)) {
+    for (m <- messages; c <- callback if c(m)) {
 		 m.setFlag(Flags.Flag.DELETED, true)
-	}
+    }
 	
-	inbox foreach { _.expunge }
+	  inbox foreach { _.expunge }
   }
   
   // Useful for debugging from the console:
@@ -183,7 +179,7 @@ object EmailReceiver extends LiftActor with Loggable {
 
     case c: Credentials => credentials = Full(c)
 
-	case Callback(h) => callback = Full(h)
+    case Callback(h) => callback = Full(h)
 
     case 'startup => connect
 
@@ -191,9 +187,11 @@ object EmailReceiver extends LiftActor with Loggable {
 
     case 'restart =>
       logger.info("IMAP Restart request received")
-      retry(10) {
+      retry {
         reconnect
       }
+      // manual collection in case we missed any notifications during restart or during error handling
+      EmailReceiver ! 'collect 
 
     case 'collect =>
       logger.info("IMAP Manually checking inbox")
@@ -201,6 +199,7 @@ object EmailReceiver extends LiftActor with Loggable {
       idle
 
     case e: MessageCountEvent if !e.isRemoved =>
+      logger.info("Messages available")
       processEmail(e.getMessages)
       idle
 

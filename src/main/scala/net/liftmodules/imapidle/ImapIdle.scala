@@ -28,7 +28,7 @@ object ImapIdle extends Loggable {
 		case Full(u) :: Full(p) :: Full(h) :: Nil =>
         	EmailReceiver ! Credentials(u, p, h)
         	EmailReceiver ! Callback(handler)
-			EmailReceiver ! 'startup
+          EmailReceiver ! 'startup
         	EmailReceiver ! 'collect
 
       	case _ => logger.warn("IMAP - feature not starting")

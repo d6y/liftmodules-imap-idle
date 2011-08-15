@@ -23,6 +23,9 @@ import javax.mail.event._
 import javax.mail.internet._
 import com.sun.mail.imap._
 
+/**
+ * Provides utilities for decoding javax.mail message objects.
+ */
 object EmailUtils extends Loggable {
 
   implicit def multipartHelper(m: MimeMultipart) = new {
