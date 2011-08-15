@@ -1,0 +1,9 @@
+* If disconnected from the IMAP server, we now explicitly request all waiting messages on a reconnect.  This is to avoid potentially missed new message notifications while disconnected.
+* Switched to SBT 0.10.1.
+* Now also publishing source and javadoc into the repository.
+
+This version is available for Lift 2.4-M3 for Scala 2.8.1 and 2.9.0-1.
+
+
+
+
