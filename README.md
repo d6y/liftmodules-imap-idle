@@ -20,9 +20,7 @@ Provides push-like email: your Lift web application can be notified when email a
 
 3. Set your IMAP login credentials in your props file, e.g.:
 
-        $ cat src/main/resources/production.default.props
-        # Check in the Google settings for this account
-        # so be sure IMAP is enabled 
+        $ cat src/main/resources/production.default.props 
         imap.idle.mail.user=you@yourdomain.com
         imap.idle.mail.password=trustno1
         imap.idle.mail.host=imap.gmail.com
@@ -51,7 +49,9 @@ Using this module you can provide a way for users to email in content via an [ad
 
  * If you're deploying under Jetty 6.1.26 or earlier, you will need to replace $JETTY_HOME/lib/naming/mail-1.4.jar with mail-1.4.1.jar or later (1.4.4 is the version that ships with Lift). Or... in some way resolve this w.r.t to [Jetty classloader](http://docs.codehaus.org/display/JETTY/Classloading).
 
- * This code depends on a com.sun class, meaning it may not work under non-Sun derived JDKs.
+ * This code depends on a `com.sun` class in `EmailUtils`, meaning it may not work under non-Sun derived JDKs.
+
+ * If your application is partitioned from the IMAP server it may take 30 minutes for the IMAP IDLE code to detect this and re-establish a connection to collect messages. 
 
 
 ## How this works

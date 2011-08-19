@@ -28,17 +28,28 @@ object ImapIdle extends Loggable {
 	def init : Unit = { }	
 		
   /**
-  * Initialise IMAP IDLE module if imap.idle.mail.user, imap.idle.mail.password and imap.idle.mail.host values are 
-  found in Props.
-  * @param handle the function to execute for each email recevied. 
+  * Start the IMAP IDLE module using the imap.idle.mail.user, imap.idle.mail.password and imap.idle.mail.host Props.
+  * @param handle the function to execute for each email received. 
   */  
 	def init(handler: MessageHandler) : Unit =  List("user", "password", "host") map { k => Props.get("imap.idle.mail."+k) } match {
-		case Full(u) :: Full(p) :: Full(h) :: Nil =>
-        	EmailReceiver ! Credentials(u, p, h)
-        	EmailReceiver ! Callback(handler)
-          EmailReceiver ! 'startup
-        	EmailReceiver ! 'collect
-
-      	case _ => logger.warn("IMAP - feature not starting")
+		case Full(u) :: Full(p) :: Full(h) :: Nil => init(u,p,h) { handler }
+    case _ => logger.warn("IMAP - feature not starting because of missing imap.idle props")
     }
+  
+  /**
+   * Start the IMAP IDLE module using the given host and credentials.
+   * @param username the IMAP server username to connect as. Often an email address.
+   * @param password the IMAP server password associated with the given username.
+   * @param host the IMAP server to connect to.
+   * @param handle the function to execute for each email received.
+   */
+  def init(username: String, password: String, host: String)(handler: MessageHandler): Unit = {
+    EmailReceiver ! Credentials(username, password, host)
+    EmailReceiver ! Callback(handler)
+    EmailReceiver ! 'startup
+    EmailReceiver ! 'collect
+    EmailReceiver ! 'reap // schedule clean up of stale connections
+  }
+
+
 }

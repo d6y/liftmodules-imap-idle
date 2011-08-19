@@ -25,18 +25,18 @@ import java.util.Properties
 import net.liftweb.actor._
 import net.liftweb.common._
 import net.liftweb.util._
+import net.liftweb.util.Helpers._
 
-/**
- * Container for the IMAP authentication credentials.
- */
+import org.joda.time._
+
 case class Credentials(username: String, password: String, host: String = "imap.gmail.com")
-case class Callback(h: MessageHandler)
 
+case class Callback(h: MessageHandler)
 
 /**
  * Actor which manages the connection to the IMAP server
  * and dispatches javax.mail.Messages to the user function
- * given during ImapIdle.init
+ * given during `ImapIdle.init`.
  * This actor is started automatically during init.
  */
 object EmailReceiver extends LiftActor with Loggable {
@@ -50,9 +50,14 @@ object EmailReceiver extends LiftActor with Loggable {
   // To be able to remove listeners during a clean up, we need to keep a list of them.
   private var listeners: List[java.util.EventListener] = Nil
 
+  // If the connection to the IMAP server goes away, we manually disconnect idle connections that are older than 30 minutes
+  private var idleEnteredAt: Box[DateTime] = Empty
+  
   // Idle the connection. "Idle" in the sense of "run slowly while disconnected from a load or out of gear" perhaps. RFC2177
-  def idle {
+  private def idle {
 
+    idleEnteredAt = Full(new DateTime)
+    
     // IMAPFolder.idle() blocks until the server has an event for us, so we call this in a separate thread. 
     def safeIdle(f: IMAPFolder) {
       scala.actors.Actor.actor {
@@ -65,6 +70,7 @@ object EmailReceiver extends LiftActor with Loggable {
             logger.warn("IMAP Attempt to idle produced " + x)
             EmailReceiver ! 'restart
         }
+        idleEnteredAt = Empty
       }
     }
 
@@ -74,7 +80,7 @@ object EmailReceiver extends LiftActor with Loggable {
     }
   }
 
-  // Connect to GMAIL and pipe all events to this actor
+  // Connect to the IMAP server and pipe all events to this actor
   private def connect = {
 
     logger.debug("IMAP Connecting")
@@ -150,7 +156,7 @@ object EmailReceiver extends LiftActor with Loggable {
       }
       if (s.isConnected) s.close()
     }
-
+    
     inbox = Empty
     store = Empty
     listeners = Nil
@@ -161,14 +167,14 @@ object EmailReceiver extends LiftActor with Loggable {
     block
   } catch {
     case e =>
-      logger.warn("IMAP Retry failed - will retry", e)
-      Thread.sleep(1000L * 60)
+      logger.warn("IMAP Retry failed - will retry: "+e.getMessage)
+      Thread.sleep(1 minute)
       retry(block)
   }
   
   private def reconnect {
     disconnect
-    Thread.sleep(1000L * 5)
+    Thread.sleep(5 seconds)
     connect
   }
 
@@ -208,10 +214,20 @@ object EmailReceiver extends LiftActor with Loggable {
       idle
 
     case e: MessageCountEvent if !e.isRemoved =>
-      logger.info("Messages available")
+      logger.info("IMAP Messages available")
+      idleEnteredAt = Full(new DateTime) // no need to reap as we must be connected
       processEmail(e.getMessages)
       idle
 
+    case 'reap => 
+      logger.debug("IMAP Reaping old IDLE connections")
+      Schedule.schedule(this, 'reap, 1 minute)
+      for { 
+        then <- idleEnteredAt
+        dur = new Duration(then, new DateTime)
+        if dur.getMillis() > (30 minutes)
+      } EmailReceiver ! 'restart
+             
     case e: StoreEvent => logger.warn("IMAP Store event reported: " + e.getMessage)
 
     case e: ConnectionEvent if e.getType == ConnectionEvent.OPENED => logger.debug("IMAP Connection opened")
@@ -220,7 +236,7 @@ object EmailReceiver extends LiftActor with Loggable {
     case e: ConnectionEvent if e.getType == ConnectionEvent.CLOSED =>
       logger.info("IMAP Connection closed - reconnecting")
       reconnect
-
-    case e => logger.warn("IMAP Unhandled email event: " + e)
+      
+    case e => logger.warn("IMAP Unhandled email event: "+e)
   }
 }
