@@ -1,9 +1,9 @@
 package net.liftmodules.imapidle
 
 /** Command-line test harness. */
-object TestApp extends App {
+object TestApp {
 
-	args match {
+  def main(args: Array[String]): Unit = args match {
 		
 		case Array(user,password,host) => ImapIdle.init(user,password,host) { m: javax.mail.Message => 
 			println("Got "+EmailUtils.dump(m))
