@@ -8,6 +8,8 @@ scalaVersion := "2.9.0-1"
  
 crossScalaVersions := Seq("2.8.1", "2.9.0-1")
 
+(siteId in Posterous) := 1001240
+
 seq(com.github.siasia.WebPlugin.webSettings :_*)
 
 // If using JRebel
