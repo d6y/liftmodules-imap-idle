@@ -1,0 +1,2 @@
+* Published build artificats for Lift 2.4-M4 and Scala 2.8.1, 2.9.0-1 and 2.9.1
+

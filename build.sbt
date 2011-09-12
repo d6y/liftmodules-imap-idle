@@ -1,12 +1,12 @@
 name := "imap-idle"
 
-version := "2.4-M3-0.91"
+version := "2.4-M4-0.91"
 
 organization := "net.liftmodules"
  
-scalaVersion := "2.9.0-1"
+scalaVersion := "2.9.1"
  
-crossScalaVersions := Seq("2.8.1", "2.9.0-1")
+crossScalaVersions := Seq("2.8.1", "2.9.0-1", "2.9.1")
 
 (siteId in Posterous) := 1001240
 
@@ -18,7 +18,7 @@ jettyScanDirs := Nil
 resolvers += "Java.net Maven2 Repository" at "http://download.java.net/maven/2/"
 
 libraryDependencies ++= {
-  val liftVersion = "2.4-M3" 
+  val liftVersion = "2.4-M4" 
   Seq(
     "net.liftweb" %% "lift-webkit" % liftVersion % "compile->default",
     "net.liftweb" %% "lift-mapper" % liftVersion % "compile->default",
