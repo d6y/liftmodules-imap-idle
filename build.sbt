@@ -1,6 +1,6 @@
 name := "imap-idle"
 
-version := "2.4-M4-0.91"
+version := "2.4-SNAPSHOT-0.92"
 
 organization := "net.liftmodules"
  
@@ -17,8 +17,13 @@ jettyScanDirs := Nil
 
 resolvers += "Java.net Maven2 Repository" at "http://download.java.net/maven/2/"
 
+resolvers += "Scala Snapshots" at "http://scala-tools.org/repo-snapshots"
+
+// Scary workaround for sha1 mismatch in scala tools snapshot repo with sbt!
+checksums := Nil
+
 libraryDependencies ++= {
-  val liftVersion = "2.4-M4" 
+  val liftVersion = "2.4-SNAPSHOT" 
   Seq(
     "net.liftweb" %% "lift-webkit" % liftVersion % "compile->default",
     "net.liftweb" %% "lift-mapper" % liftVersion % "compile->default",

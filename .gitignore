@@ -13,3 +13,4 @@ project/plugins/project/build.properties
 
 /cloudbees.credentials
 /.target/
+.cache

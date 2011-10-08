@@ -1,0 +1,3 @@
+* Reduced number of calls to IMAP server during start up.  No client code change if you call `ImapIdle.init` but if you manually interact with the `EmailReceiver` actor, please note there is now an `'idle` mesasge you'll need to send it to get into idle mode.
+* Compiled against Lift 2.4-M4 and Scala 2.8.1, 2.9.0-1 and 2.9.1
+

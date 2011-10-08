@@ -50,7 +50,7 @@ object EmailReceiver extends LiftActor with Loggable {
   // To be able to remove listeners during a clean up, we need to keep a list of them.
   private var listeners: List[java.util.EventListener] = Nil
 
-  // If the connection to the IMAP server goes away, we manually disconnect idle connections that are older than 30 minutes
+  // If the connection to the IMAP server goes away, we manually disconnect (reap) idle connections that are older than 30 minutes
   private var idleEnteredAt: Box[DateTime] = Empty
   
   // Idle the connection. "Idle" in the sense of "run slowly while disconnected from a load or out of gear" perhaps. RFC2177
@@ -116,8 +116,11 @@ object EmailReceiver extends LiftActor with Loggable {
     	store.connect(c.host, c.username, c.password)
 
     	val inbox = store.getFolder("INBOX")
-    	inbox.open(Folder.READ_WRITE)
-
+      if (inbox.exists) 
+        inbox.open(Folder.READ_WRITE)
+      else 
+        logger.error("IMAP - folder INBOX not found. Carrying on in case it reappears")
+       
     	val countListener = new MessageCountAdapter {
       		override def messagesAdded(e: MessageCountEvent): Unit = EmailReceiver ! e
     	}
@@ -126,10 +129,8 @@ object EmailReceiver extends LiftActor with Loggable {
 
     	logger.info("IMAP Connected, listeners ready")
 
-    	this.inbox = Full(inbox)
-    	this.store = Full(store)
-
-    	idle
+    	this.inbox = Box !! inbox
+    	this.store = Box !! store
     }
   }
 
@@ -163,18 +164,19 @@ object EmailReceiver extends LiftActor with Loggable {
 
   }
 
-  private def retry(block: => Unit): Unit = try {
-    block
+  
+  private def retry(f: => Unit): Unit = try {
+    f
   } catch {
     case e =>
       logger.warn("IMAP Retry failed - will retry: "+e.getMessage)
       Thread.sleep(1 minute)
-      retry(block)
+      retry(f)
   }
   
   private def reconnect {
     disconnect
-    Thread.sleep(5 seconds)
+    Thread.sleep(15 seconds)
     connect
   }
 
@@ -196,7 +198,13 @@ object EmailReceiver extends LiftActor with Loggable {
 
     case Callback(h) => callback = Full(h)
 
-    case 'startup => connect
+    case 'startup => 
+      connect
+      EmailReceiver ! 'collect 
+      EmailReceiver ! 'idle 
+      EmailReceiver ! 'reap 
+        
+    case 'idle => idle    
 
     case 'shutdown => disconnect
 
@@ -207,17 +215,16 @@ object EmailReceiver extends LiftActor with Loggable {
       }
       // manual collection in case we missed any notifications during restart or during error handling
       EmailReceiver ! 'collect 
+      EmailReceiver ! 'idle 
 
     case 'collect =>
       logger.info("IMAP Manually checking inbox")
       inbox map { _.getMessages } foreach { msgs => processEmail(msgs) }
-      idle
 
     case e: MessageCountEvent if !e.isRemoved =>
       logger.info("IMAP Messages available")
-      idleEnteredAt = Full(new DateTime) // no need to reap as we must be connected
       processEmail(e.getMessages)
-      idle
+      EmailReceiver ! 'idle
 
     case 'reap => 
       logger.debug("IMAP Reaping old IDLE connections")

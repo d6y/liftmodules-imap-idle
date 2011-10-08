@@ -47,8 +47,6 @@ object ImapIdle extends Loggable {
     EmailReceiver ! Credentials(username, password, host)
     EmailReceiver ! Callback(handler)
     EmailReceiver ! 'startup
-    EmailReceiver ! 'collect
-    EmailReceiver ! 'reap // schedule clean up of stale connections
   }
 
 
