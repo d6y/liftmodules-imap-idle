@@ -1,6 +1,6 @@
 name := "imap-idle"
 
-version := "2.4-SNAPSHOT-0.92"
+version := "2.4-M5-0.92"
 
 organization := "net.liftmodules"
  
@@ -23,7 +23,7 @@ resolvers += "Scala Snapshots" at "http://scala-tools.org/repo-snapshots"
 checksums := Nil
 
 libraryDependencies ++= {
-  val liftVersion = "2.4-SNAPSHOT" 
+  val liftVersion = "2.4-M5" 
   Seq(
     "net.liftweb" %% "lift-webkit" % liftVersion % "compile->default",
     "net.liftweb" %% "lift-mapper" % liftVersion % "compile->default",
