@@ -5,24 +5,18 @@
  "description":"Push-like email: your Lift web application is notified when email arrives",
  "site":"https://github.com/d6y/liftmodules-imap-idle",
  "tags": ["lift", "liftweb", "email", "imap", "lift module"],
- # a uri for version-specific api docs
- "docs":"http://yourdomain.org/awesome-library-docs",
- # licenses if you care for them
  "licenses": [{
    "name": "Apache 2.0",
    "url":"https://github.com/d6y/liftmodules-imap-idle/blob/master/LICENSE.txt"
   }],
  "resolvers": ["http://repository-liftmodules.forge.cloudbees.com/release/"],
- # isn't this stuff in the build.sbt file?
  "dependencies": [{
    "organization":"net.liftweb",
    "name": "lift-webkit",
    "version": "2.4-M5"
   }],
- # scala cross-binary dialects
  "scalas": [
    "2.8.1","2.9.0-1","2.9.1"
   ],
- # is this an sbt plugin?
  "sbt": false
 }
