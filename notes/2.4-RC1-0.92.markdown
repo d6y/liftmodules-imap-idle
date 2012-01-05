@@ -1,0 +1,4 @@
+* Compiled against Lift 2.4-RC1 and Scala 2.8.1, 2.9.0-1 and 2.9.1
+* Upgraded to SBT 0.11.2
+
+
