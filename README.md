@@ -6,7 +6,7 @@ Provides push-like email: your Lift web application can be notified when email a
 
 1. Add the following repository to your SBT project file:
 
-  For SBT 0.10:
+  For SBT 0.11:
 
         resolvers += "liftmodules repository" at "http://repository-liftmodules.forge.cloudbees.com/release/"
 
