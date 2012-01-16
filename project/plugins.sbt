@@ -4,4 +4,3 @@ libraryDependencies <+= sbtVersion(v => "com.github.siasia" %% "xsbt-web-plugin"
 
 addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "2.0.0-M3")
 
-addSbtPlugin("net.databinder" % "posterous-sbt" % "0.3.2")

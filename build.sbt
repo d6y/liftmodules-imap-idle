@@ -1,14 +1,12 @@
 name := "imap-idle"
 
-version := "2.4-RC1-0.92"
+version := "2.4-0.92"
 
 organization := "net.liftmodules"
  
 scalaVersion := "2.9.1"
  
 crossScalaVersions := Seq("2.8.1", "2.9.0-1", "2.9.1")
-
-//(siteId in Posterous) := 1001240
 
 seq(com.github.siasia.WebPlugin.webSettings :_*)
 
@@ -20,7 +18,7 @@ resolvers += "Scala Snapshots" at "http://scala-tools.org/repo-snapshots"
 //checksums := Nil
 
 libraryDependencies ++= {
-  val liftVersion = "2.4-RC1" 
+  val liftVersion = "2.4" 
   Seq(
     "net.liftweb" %% "lift-webkit" % liftVersion % "compile->default",
     "net.liftweb" %% "lift-mapper" % liftVersion % "compile->default",

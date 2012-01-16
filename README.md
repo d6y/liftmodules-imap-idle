@@ -16,7 +16,7 @@ Provides push-like email: your Lift web application can be notified when email a
 
 2. Add the following dependency to your SBT project file:
 
-        "net.liftmodules" %% "imap-idle" % (liftVersion+"-0.9.1")
+        "net.liftmodules" %% "imap-idle" % (liftVersion+"-0.92")
 
 3. Set your IMAP login credentials in your props file, e.g.:
 
