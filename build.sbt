@@ -1,29 +1,22 @@
 name := "imap-idle"
 
-version := "2.4-0.92"
+liftVersion <<= liftVersion ?? "2.4"
 
-organization := "net.liftmodules"
+version <<= liftVersion apply { _ + "-0.92" }
  
 scalaVersion := "2.9.1"
  
 crossScalaVersions := Seq("2.8.1", "2.9.0-1", "2.9.1")
 
-//seq(com.github.siasia.WebPlugin.webSettings :_*)
-
 resolvers += "Java.net Maven2 Repository" at "http://download.java.net/maven/2/"
 
 resolvers += "Scala Snapshots" at "http://scala-tools.org/repo-snapshots"
 
-// Scary workaround for sha1 mismatch in scala tools snapshot repo with sbt!
-//checksums := Nil
-
-libraryDependencies ++= {
-  val liftVersion = "2.4" 
-  Seq(
-    "net.liftweb" %% "lift-webkit" % liftVersion % "compile->default",
-    "net.liftweb" %% "lift-mapper" % liftVersion % "compile->default",
-    "net.liftweb" %% "lift-wizard" % liftVersion % "compile->default" )
-}
+libraryDependencies <++= liftVersion { v =>
+  "net.liftweb" %% "lift-webkit" % v % "compile->default" ::
+  "net.liftweb" %% "lift-mapper" % v % "compile->default" ::
+  Nil
+}    
 
 // Customize any further dependencies as desired
 libraryDependencies ++= Seq(
