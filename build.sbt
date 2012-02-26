@@ -3,6 +3,8 @@ name := "imap-idle"
 liftVersion <<= liftVersion ?? "2.4"
 
 version <<= liftVersion apply { _ + "-0.92" }
+
+organization := "net.liftmodules"
  
 scalaVersion := "2.9.1"
  
