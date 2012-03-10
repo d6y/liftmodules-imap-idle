@@ -12,8 +12,6 @@ crossScalaVersions := Seq("2.8.1", "2.9.0-1", "2.9.1")
 
 resolvers += "Java.net Maven2 Repository" at "http://download.java.net/maven/2/"
 
-resolvers += "Scala Snapshots" at "http://scala-tools.org/repo-snapshots"
-
 libraryDependencies <++= liftVersion { v =>
   "net.liftweb" %% "lift-webkit" % v % "compile->default" ::
   "net.liftweb" %% "lift-mapper" % v % "compile->default" ::
