@@ -1,14 +1,14 @@
 name := "imap-idle"
 
-liftVersion <<= liftVersion ?? "2.4"
+liftVersion <<= liftVersion ?? "2.5-SNAPSHOT"
 
-version <<= liftVersion apply { _ + "-0.92" }
+version <<= liftVersion apply { _ + "-1.0-SNAPSHOT" }
 
 organization := "net.liftmodules"
  
-scalaVersion := "2.9.1"
+scalaVersion := "2.9.2"
  
-crossScalaVersions := Seq("2.8.1", "2.9.0-1", "2.9.1")
+crossScalaVersions := Seq("2.8.1", "2.9.0-1", "2.9.1", "2.9.2")
 
 resolvers += "Java.net Maven2 Repository" at "http://download.java.net/maven/2/"
 
@@ -17,6 +17,9 @@ libraryDependencies <++= liftVersion { v =>
   "net.liftweb" %% "lift-mapper" % v % "compile->default" ::
   Nil
 }    
+
+resolvers += ScalaToolsSnapshots
+
 
 // Customize any further dependencies as desired
 libraryDependencies ++= Seq(
@@ -27,9 +30,40 @@ libraryDependencies ++= Seq(
   "ch.qos.logback" % "logback-classic" % "0.9.26" % "compile->default" // Logging
 )
 
- // To publish to the Cloudbees repos:
 
-publishTo := Some("liftmodules repository" at "https://repository-liftmodules.forge.cloudbees.com/release/")
- 
-credentials += Credentials( file("/private/liftmodules/cloudbees.credentials") )
+publishTo <<= version { _.endsWith("SNAPSHOT") match {
+  case true  => Some("snapshots" at "https://oss.sonatype.org/content/repositories/snapshots")
+  case false => Some("releases" at "https://oss.sonatype.org/service/local/staging/deploy/maven2")
+  }
+ } 
 
+credentials += Credentials( file("sonatype.credentials") )
+
+publishMavenStyle := true
+
+publishArtifact in Test := false
+
+pomIncludeRepository := { _ => false }
+
+pomExtra := (
+  <url>https://github.com/d6y/liftmodules-imap-idle</url>
+  <licenses>
+    <license>
+        <name>Apache 2.0 License</name>
+        <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+        <distribution>repo</distribution>
+      </license>
+   </licenses>
+   <scm>
+      <url>git@github.com:d6y/liftmodules-imap-idle.git</url>
+      <connection>scm:git:git@github.com:d6y/liftmodules-imap-idle.git</connection>
+   </scm>
+   <developers>
+      <developer>
+        <id>d6y</id>
+        <name>Richard Dallaway</name>
+        <url>http://richard.dallaway.com</url>
+    </developer>
+   </developers> 
+ )
+  
