@@ -39,6 +39,9 @@ publishTo <<= version { _.endsWith("SNAPSHOT") match {
 
 credentials += Credentials( file("sonatype.credentials") )
 
+credentials += Credentials( file("/private/liftmodules/sonatype.credentials") )
+
+
 publishMavenStyle := true
 
 publishArtifact in Test := false
