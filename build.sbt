@@ -8,18 +8,21 @@ organization := "net.liftmodules"
  
 scalaVersion := "2.9.2"
  
-crossScalaVersions := Seq("2.8.1", "2.9.0-1", "2.9.1", "2.9.2")
+crossScalaVersions := Seq("2.9.1-1", "2.9.1", "2.9.2")
 
 resolvers += "Java.net Maven2 Repository" at "http://download.java.net/maven/2/"
+
+resolvers += "CB Central Mirror" at "http://repo.cloudbees.com/content/groups/public"
+
+resolvers += "Sonatype OSS Release" at "http://oss.sonatype.org/content/repositories/releases"
+
+resolvers += "Sonatype Snapshot" at "http://oss.sonatype.org/content/repositories/snapshots" 
 
 libraryDependencies <++= liftVersion { v =>
   "net.liftweb" %% "lift-webkit" % v % "compile->default" ::
   "net.liftweb" %% "lift-mapper" % v % "compile->default" ::
   Nil
 }    
-
-resolvers += ScalaToolsSnapshots
-
 
 // Customize any further dependencies as desired
 libraryDependencies ++= Seq(
@@ -30,7 +33,6 @@ libraryDependencies ++= Seq(
   "ch.qos.logback" % "logback-classic" % "0.9.26" % "compile->default" // Logging
 )
 
-
 publishTo <<= version { _.endsWith("SNAPSHOT") match {
   case true  => Some("snapshots" at "https://oss.sonatype.org/content/repositories/snapshots")
   case false => Some("releases" at "https://oss.sonatype.org/service/local/staging/deploy/maven2")
@@ -40,7 +42,6 @@ publishTo <<= version { _.endsWith("SNAPSHOT") match {
 credentials += Credentials( file("sonatype.credentials") )
 
 credentials += Credentials( file("/private/liftmodules/sonatype.credentials") )
-
 
 publishMavenStyle := true
 
