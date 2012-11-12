@@ -1,14 +1,14 @@
 name := "imap-idle"
 
-liftVersion <<= liftVersion ?? "2.5-SNAPSHOT"
+liftVersion <<= liftVersion ?? "2.5-M3"
 
-version <<= liftVersion apply { _ + "-1.0-SNAPSHOT" }
+version <<= liftVersion apply { _ + "-1.0" }
 
 organization := "net.liftmodules"
  
 scalaVersion := "2.9.2"
  
-crossScalaVersions := Seq("2.9.1-1", "2.9.1", "2.9.2")
+crossScalaVersions := Seq("2.9.2", "2.9.1-1", "2.9.1")
 
 resolvers += "Java.net Maven2 Repository" at "http://download.java.net/maven/2/"
 
