@@ -1,5 +1,5 @@
 /*
-        Copyright 2011 Spiral Arm Ltd
+        Copyright 2011-2013 Spiral Arm Ltd
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ object EmailUtils extends Loggable {
   def asString(m: Message) = (decodeSubject(m) + " " + decodeBody(m)) trim
 
   private def decodeSubject(m: Message): String = Box !! m.getSubject openOr ("")
-  
+
   private def decodeBody(m: Part): String = m.getContent match {
     case c: String if m.isMimeType("text/plain") => c
     case p: MimeMultipart => p.bodyParts map { decodeBody } mkString " "
@@ -43,7 +43,7 @@ object EmailUtils extends Loggable {
       logger.warn("IMAP Don't know how to extract text from a " + x.getClass + " " + m.getContentType + ": " + x)
       ""
     }
-  
+
   def to(m: Message) = m.getAllRecipients map { _.toString } mkString (",")
 
   def address(address: Address) = address match {

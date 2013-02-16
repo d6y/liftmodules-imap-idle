@@ -1,5 +1,5 @@
 /*
-        Copyright 2011 Spiral Arm Ltd
+        Copyright 2011-2013 Spiral Arm Ltd
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -52,13 +52,13 @@ object EmailReceiver extends LiftActor with Loggable {
 
   // If the connection to the IMAP server goes away, we manually disconnect (reap) idle connections that are older than 30 minutes
   private var idleEnteredAt: Box[DateTime] = Empty
-  
+
   // Idle the connection. "Idle" in the sense of "run slowly while disconnected from a load or out of gear" perhaps. RFC2177
   private def idle {
 
     idleEnteredAt = Full(new DateTime)
-    
-    // IMAPFolder.idle() blocks until the server has an event for us, so we call this in a separate thread. 
+
+    // IMAPFolder.idle() blocks until the server has an event for us, so we call this in a separate thread.
     def safeIdle(f: IMAPFolder) {
       scala.actors.Actor.actor {
         try {
@@ -66,7 +66,7 @@ object EmailReceiver extends LiftActor with Loggable {
           f.idle
           logger.debug("IMAP Actor idle block exited")
         } catch { // If the idle fails, we want to restart the connection because we will no longer be waiting for messages.
-          case x =>
+          case x : Throwable=>
             logger.warn("IMAP Attempt to idle produced " + x)
             EmailReceiver ! 'restart
         }
@@ -112,15 +112,15 @@ object EmailReceiver extends LiftActor with Loggable {
     listeners = storeListener :: listeners
     store.addStoreListener(storeListener)
 
-    credentials foreach { c => 
+    credentials foreach { c =>
     	store.connect(c.host, c.username, c.password)
 
     	val inbox = store.getFolder("INBOX")
-      if (inbox.exists) 
+      if (inbox.exists)
         inbox.open(Folder.READ_WRITE)
-      else 
+      else
         logger.error("IMAP - folder INBOX not found. Carrying on in case it reappears")
-       
+
     	val countListener = new MessageCountAdapter {
       		override def messagesAdded(e: MessageCountEvent): Unit = EmailReceiver ! e
     	}
@@ -157,23 +157,23 @@ object EmailReceiver extends LiftActor with Loggable {
       }
       if (s.isConnected) s.close()
     }
-    
+
     inbox = Empty
     store = Empty
     listeners = Nil
 
   }
 
-  
+
   private def retry(f: => Unit): Unit = try {
     f
   } catch {
-    case e =>
+    case e : Throwable =>
       logger.warn("IMAP Retry failed - will retry: "+e.getMessage)
       Thread.sleep(1 minute)
       retry(f)
   }
-  
+
   private def reconnect {
     disconnect
     Thread.sleep(15 seconds)
@@ -185,26 +185,26 @@ object EmailReceiver extends LiftActor with Loggable {
     for (m <- messages; c <- callback if c(m)) {
 		 m.setFlag(Flags.Flag.DELETED, true)
     }
-	
+
 	  inbox foreach { _.expunge }
   }
-  
+
   // Useful for debugging from the console:
   //def getInbox = inbox
-  
+
   def messageHandler = {
 
     case c: Credentials => credentials = Full(c)
 
     case Callback(h) => callback = Full(h)
 
-    case 'startup => 
+    case 'startup =>
       connect
-      EmailReceiver ! 'collect 
-      EmailReceiver ! 'idle 
-      EmailReceiver ! 'reap 
-        
-    case 'idle => idle    
+      EmailReceiver ! 'collect
+      EmailReceiver ! 'idle
+      EmailReceiver ! 'reap
+
+    case 'idle => idle
 
     case 'shutdown => disconnect
 
@@ -214,8 +214,8 @@ object EmailReceiver extends LiftActor with Loggable {
         reconnect
       }
       // manual collection in case we missed any notifications during restart or during error handling
-      EmailReceiver ! 'collect 
-      EmailReceiver ! 'idle 
+      EmailReceiver ! 'collect
+      EmailReceiver ! 'idle
 
     case 'collect =>
       logger.info("IMAP Manually checking inbox")
@@ -226,15 +226,15 @@ object EmailReceiver extends LiftActor with Loggable {
       processEmail(e.getMessages)
       EmailReceiver ! 'idle
 
-    case 'reap => 
+    case 'reap =>
       logger.debug("IMAP Reaping old IDLE connections")
       Schedule.schedule(this, 'reap, 1 minute)
-      for { 
+      for {
         then <- idleEnteredAt
         dur = new Duration(then, new DateTime)
         if dur.getMillis() > (30 minutes)
       } EmailReceiver ! 'restart
-             
+
     case e: StoreEvent => logger.warn("IMAP Store event reported: " + e.getMessage)
 
     case e: ConnectionEvent if e.getType == ConnectionEvent.OPENED => logger.debug("IMAP Connection opened")
@@ -243,7 +243,7 @@ object EmailReceiver extends LiftActor with Loggable {
     case e: ConnectionEvent if e.getType == ConnectionEvent.CLOSED =>
       logger.info("IMAP Connection closed - reconnecting")
       reconnect
-      
+
     case e => logger.warn("IMAP Unhandled email event: "+e)
   }
 }

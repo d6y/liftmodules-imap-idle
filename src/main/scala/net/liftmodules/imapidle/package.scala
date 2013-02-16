@@ -1,5 +1,5 @@
 /*
-        Copyright 2011 Spiral Arm Ltd
+        Copyright 2011-2013 Spiral Arm Ltd
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 package net.liftmodules
 
 package object imapidle {
-	
-   /** Signature for a function that is given an email and 
+
+   /** Signature for a function that is given an email and
    signals the email should be deleted (true) or not (false).
    Warning: this is likely to change from returning a boolean to
    an enumeration for clarity. */

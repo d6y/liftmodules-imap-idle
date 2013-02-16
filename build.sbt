@@ -5,10 +5,12 @@ liftVersion <<= liftVersion ?? "2.5-SNAPSHOT"
 version <<= liftVersion apply { _ + "-1.0-SNAPSHOT" }
 
 organization := "net.liftmodules"
- 
+
 scalaVersion := "2.9.2"
- 
-crossScalaVersions := Seq("2.9.1-1", "2.9.1", "2.9.2")
+
+crossScalaVersions := Seq("2.9.1-1", "2.9.1", "2.9.2", "2.10.0")
+
+scalacOptions ++= Seq("-unchecked", "-deprecation")
 
 resolvers += "Java.net Maven2 Repository" at "http://download.java.net/maven/2/"
 
@@ -16,13 +18,13 @@ resolvers += "CB Central Mirror" at "http://repo.cloudbees.com/content/groups/pu
 
 resolvers += "Sonatype OSS Release" at "http://oss.sonatype.org/content/repositories/releases"
 
-resolvers += "Sonatype Snapshot" at "http://oss.sonatype.org/content/repositories/snapshots" 
+resolvers += "Sonatype Snapshot" at "http://oss.sonatype.org/content/repositories/snapshots"
 
 libraryDependencies <++= liftVersion { v =>
   "net.liftweb" %% "lift-webkit" % v % "compile->default" ::
   "net.liftweb" %% "lift-mapper" % v % "compile->default" ::
   Nil
-}    
+}
 
 // Customize any further dependencies as desired
 libraryDependencies ++= Seq(
@@ -37,7 +39,7 @@ publishTo <<= version { _.endsWith("SNAPSHOT") match {
   case true  => Some("snapshots" at "https://oss.sonatype.org/content/repositories/snapshots")
   case false => Some("releases" at "https://oss.sonatype.org/service/local/staging/deploy/maven2")
   }
- } 
+ }
 
 credentials += Credentials( file("sonatype.credentials") )
 
@@ -68,6 +70,6 @@ pomExtra := (
         <name>Richard Dallaway</name>
         <url>http://richard.dallaway.com</url>
     </developer>
-   </developers> 
+   </developers>
  )
-  
+

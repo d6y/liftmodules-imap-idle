@@ -4,8 +4,8 @@ package net.liftmodules.imapidle
 object TestApp {
 
   def main(args: Array[String]): Unit = args match {
-		
-		case Array(user,password,host) => ImapIdle.init(user,password,host) { m: javax.mail.Message => 
+
+		case Array(user,password,host) => ImapIdle.init(user,password,host) { m: javax.mail.Message =>
 			println("Got "+EmailUtils.dump(m))
 			true
 		}
