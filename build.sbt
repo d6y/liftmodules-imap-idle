@@ -1,10 +1,14 @@
 name := "imap-idle"
 
+organization := "net.liftmodules"
+
+version := "1.0-SNAPSHOT"
+
 liftVersion <<= liftVersion ?? "2.5-SNAPSHOT"
 
-version <<= liftVersion apply { _ + "-1.0-SNAPSHOT" }
+liftEdition <<= liftVersion apply { _.substring(0,3) }
 
-organization := "net.liftmodules"
+name <<= (name, liftEdition) { (n, e) =>  n + "_" + e }
 
 scalaVersion := "2.9.2"
 
@@ -21,8 +25,7 @@ resolvers += "Sonatype OSS Release" at "http://oss.sonatype.org/content/reposito
 resolvers += "Sonatype Snapshot" at "http://oss.sonatype.org/content/repositories/snapshots"
 
 libraryDependencies <++= liftVersion { v =>
-  "net.liftweb" %% "lift-webkit" % v % "compile->default" ::
-  "net.liftweb" %% "lift-mapper" % v % "compile->default" ::
+  "net.liftweb" %% "lift-webkit" % v % "provided" ::
   Nil
 }
 
