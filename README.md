@@ -10,6 +10,9 @@ Provides push-like email: your Lift web application can be notified when email a
         // For Lift 2.5.x (Scala 2.9 and 2.10):
         "net.liftmodules" %% "imap-idle_2.5" % "1.0"
 
+        // For Lift 2.6.x (Scala 2.10):
+        "net.liftmodules" %% "imap-idle_2.6" % "1.1"
+
         // For Lift 3.0.x (Scala 2.10):
         "net.liftmodules" %% "imap-idle_3.5" % "1.0-SNAPSHOT"
 

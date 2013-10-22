@@ -16,7 +16,6 @@
 
 package net.liftmodules.imapidle
 
-import javax.mail._
 import net.liftweb.util._
 import net.liftweb.common._
 
@@ -29,7 +28,7 @@ object ImapIdle extends Loggable {
 
   /**
   * Start the IMAP IDLE module using the imap.idle.mail.user, imap.idle.mail.password and imap.idle.mail.host Props.
-  * @param handle the function to execute for each email received.
+  * @param handler the function to execute for each email received.
   */
 	def init(handler: MessageHandler) : Unit =  List("user", "password", "host") map { k => Props.get("imap.idle.mail."+k) } match {
 		case Full(u) :: Full(p) :: Full(h) :: Nil => init(u,p,h) { handler }
@@ -41,7 +40,7 @@ object ImapIdle extends Loggable {
    * @param username the IMAP server username to connect as. Often an email address.
    * @param password the IMAP server password associated with the given username.
    * @param host the IMAP server to connect to.
-   * @param handle the function to execute for each email received.
+   * @param handler the function to execute for each email received.
    */
   def init(username: String, password: String, host: String)(handler: MessageHandler): Unit = {
     EmailReceiver ! Credentials(username, password, host)

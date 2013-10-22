@@ -17,7 +17,6 @@ package net.liftmodules.imapidle
 
 import javax.mail._
 import javax.mail.event._
-import javax.mail.internet._
 import com.sun.mail.imap._
 
 import java.util.Properties
@@ -28,6 +27,8 @@ import net.liftweb.util._
 import net.liftweb.util.Helpers._
 
 import org.joda.time._
+
+import scala.language.postfixOps, scala.language.implicitConversions
 
 case class Credentials(username: String, password: String, host: String = "imap.gmail.com")
 
@@ -59,19 +60,17 @@ object EmailReceiver extends LiftActor with Loggable {
     idleEnteredAt = Full(new DateTime)
 
     // IMAPFolder.idle() blocks until the server has an event for us, so we call this in a separate thread.
-    def safeIdle(f: IMAPFolder) {
-      scala.actors.Actor.actor {
-        try {
-          logger.debug("IMAP Actor idle block entered")
-          f.idle
-          logger.debug("IMAP Actor idle block exited")
-        } catch { // If the idle fails, we want to restart the connection because we will no longer be waiting for messages.
-          case x : Throwable=>
-            logger.warn("IMAP Attempt to idle produced " + x)
-            EmailReceiver ! 'restart
-        }
-        idleEnteredAt = Empty
+    def safeIdle(f: IMAPFolder) : Unit = Schedule { () =>
+      try {
+        logger.debug("IMAP Actor idle block entered")
+        f.idle
+        logger.debug("IMAP Actor idle block exited")
+      } catch { // If the idle fails, we want to restart the connection because we will no longer be waiting for messages.
+        case x : Throwable=>
+          logger.warn("IMAP Attempt to idle produced " + x)
+          EmailReceiver ! 'restart
       }
+      idleEnteredAt = Empty
     }
 
     inbox match {
@@ -230,8 +229,8 @@ object EmailReceiver extends LiftActor with Loggable {
       logger.debug("IMAP Reaping old IDLE connections")
       Schedule.schedule(this, 'reap, 1 minute)
       for {
-        then <- idleEnteredAt
-        dur = new Duration(then, new DateTime)
+        when <- idleEnteredAt
+        dur = new Duration(when, new DateTime)
         if dur.getMillis() > (30 minutes)
       } EmailReceiver ! 'restart
 

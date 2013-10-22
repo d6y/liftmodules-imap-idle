@@ -15,20 +15,21 @@
 */
 package net.liftmodules.imapidle
 
-import net.liftweb.actor._
 import net.liftweb.common._
 
 import javax.mail._
-import javax.mail.event._
 import javax.mail.internet._
-import com.sun.mail.imap._
+
+import scala.language.postfixOps
+import scala.language.implicitConversions
+import scala.language.reflectiveCalls
 
 /**
  * Provides utilities for decoding javax.mail message objects.
  */
 object EmailUtils extends Loggable {
 
-  implicit def multipartHelper(m: MimeMultipart) = new {
+  implicit class MultipartHelper(m: MimeMultipart) {
     def bodyParts = for (i <- 0 until m.getCount) yield m.getBodyPart(i)
   }
 
@@ -56,8 +57,8 @@ object EmailUtils extends Loggable {
   def dump(m: Message) = "Recipients=" + to(m) + " Body=" + asString(m)
 
   def noopHandler(m: Message) = {
-	logger.info(dump(m))
-	false
+    logger.info(dump(m))
+    false
   }
 
 }

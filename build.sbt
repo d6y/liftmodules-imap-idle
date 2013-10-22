@@ -2,19 +2,19 @@ name := "imap-idle"
 
 organization := "net.liftmodules"
 
-version := "1.0-SNAPSHOT"
+version := "1.1-SNAPSHOT"
 
-liftVersion <<= liftVersion ?? "2.5-SNAPSHOT"
+liftVersion <<= liftVersion ?? "2.6-SNAPSHOT"
 
 liftEdition <<= liftVersion apply { _.substring(0,3) }
 
-name <<= (name, liftEdition) { (n, e) =>  n + "_" + e }
+moduleName <<= (name, liftEdition) { (n, e) =>  n + "_" + e }
 
-scalaVersion := "2.9.2"
+scalaVersion := "2.10.3"
 
-crossScalaVersions := Seq("2.9.1-1", "2.9.1", "2.9.2", "2.10.0")
+crossScalaVersions := Seq("2.10.0")
 
-scalacOptions ++= Seq("-unchecked", "-deprecation")
+scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature")
 
 resolvers += "Java.net Maven2 Repository" at "http://download.java.net/maven/2/"
 
