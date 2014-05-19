@@ -80,10 +80,12 @@ If you want to interact with EmailReceiver from the SBT console, here's how:
 
 ## To build from source:
 
+First [Install SBT](http://www.scala-sbt.org/release/docs/Getting-Started/Setup.html#installing-sbt) and then...
+
     $ git clone git://github.com/d6y/liftmodules-imap-idle.git
     $ cd liftmodules-imap-idle
-    $ ./sbt
-    > update
-    > publish-local
+    $ sbt
+    > compile
+    > publishLocal
 
 
